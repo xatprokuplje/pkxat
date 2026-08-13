@@ -9,6 +9,17 @@ import { User } from "../core/User.js";
 const pendingJoins = new Map(); // key -> { candidates: [{bot, userId, user}], timer }
 const JOIN_WINDOW_MS = 400;
 
+// xat prima cist tekst - nema pravog boje-po-slovu (gradijent) formata u
+// poruci. Ovo je "fake" gradijent efekat: kolor kvadratici u spektru boja
+// oko poruke, koji vizuelno podsecaju na gradijent traku.
+const GRADIENT_BAR = ["🟪", "🟦", "🟩", "🟨", "🟧", "🟥"];
+
+function applyGradientEffect (text) {
+    const left = GRADIENT_BAR.join("");
+    const right = [...GRADIENT_BAR].reverse().join("");
+    return `${left} ${text} ${right}`;
+}
+
 export default {
     name: "u", // Packet name
 
@@ -41,12 +52,14 @@ export default {
                     // Nasumicno biramo JEDNOG od aktivnih botova koji su videli ovaj dolazak
                     const chosen = entry.candidates[Math.floor(Math.random() * entry.candidates.length)];
 
-                    const welcomeMessage = chosen.bot.state.settings.welcome_msg
+                    const rawMessage = chosen.bot.state.settings.welcome_msg
                         .replace("{chatname}", chosen.bot.state.chatInfo.name)
                         .replace("{chatid}", chosen.bot.state.chatInfo.id)
                         .replace("{user}", chosen.user.getRegname() || "Unregistered")
                         .replace("{name}", chosen.user.getNick())
                         .replace("{uid}", chosen.userId);
+
+                    const welcomeMessage = applyGradientEffect(rawMessage);
 
                     try {
                         // Send message via PM/PC - samo od izabranog bota

@@ -9,6 +9,13 @@ import { User } from "../core/User.js";
 const pendingJoins = new Map(); // key -> { candidates: [{bot, userId, user}], timer }
 const JOIN_WINDOW_MS = 400;
 
+// Hardkodovana pozdravna poruka (vise se ne uzima iz baze/settings).
+// Podrzani placeholderi: {chatname} {chatid} {user} {name} {uid}
+const WELCOME_MESSAGE = "Dobrodosao/la u {chatname}, {name}!";
+
+// Nacin slanja: "pm" (privatna poruka) ili "pc" (public/private chat).
+const WELCOME_TYPE = "pm";
+
 // xat prima cist tekst - nema pravog boje-po-slovu (gradijent) formata u
 // poruci. Ovo je "fake" gradijent efekat: kolor kvadratici u spektru boja
 // oko poruke, koji vizuelno podsecaju na gradijent traku.
@@ -36,8 +43,7 @@ export default {
         const user = new User(packet);
         bot.state.addUser(userId, user);
 
-        // Fetch necessary values
-        if (bot.state.settings.welcome_msg && bot.state.settings.welcome_msg != "off" && !user.hasBeenHere()) {
+        if (!user.hasBeenHere()) {
             const key = `${bot.state.chatInfo?.id ?? "chat"}-${userId}`;
             let entry = pendingJoins.get(key);
 
@@ -52,7 +58,7 @@ export default {
                     // Nasumicno biramo JEDNOG od aktivnih botova koji su videli ovaj dolazak
                     const chosen = entry.candidates[Math.floor(Math.random() * entry.candidates.length)];
 
-                    const rawMessage = chosen.bot.state.settings.welcome_msg
+                    const rawMessage = WELCOME_MESSAGE
                         .replace("{chatname}", chosen.bot.state.chatInfo.name)
                         .replace("{chatid}", chosen.bot.state.chatInfo.id)
                         .replace("{user}", chosen.user.getRegname() || "Unregistered")
@@ -63,7 +69,7 @@ export default {
 
                     try {
                         // Send message via PM/PC - samo od izabranog bota
-                        await chosen.bot.reply(welcomeMessage, chosen.userId, chosen.bot.state.settings.welcome_type);
+                        await chosen.bot.reply(welcomeMessage, chosen.userId, WELCOME_TYPE);
                     } catch (error) {
                         chosen.bot.logger?.error?.(`Greska pri slanju pozdrava: ${error.message}`);
                     }

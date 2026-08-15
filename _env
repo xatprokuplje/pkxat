@@ -1,0 +1,44 @@
+# Port servera (mora da se poklapa sa adresom u src/ping.js)
+PORT=3000
+
+# Account information
+# - Za JEDAN nalog: samo popuni BOT_USER i BOT_APIKEY (kao pre).
+# - Za VIŠE naloga u istom servisu: koristi BOT_ACCOUNTS (JSON niz), ostavi BOT_USER/BOT_APIKEY prazne.
+#   BOT_ACCOUNTS=[{"username":"AngelDobric","apikey":"f9c78e399213cc93"},{"username":"Nalog2","apikey":"KLJUC2"},{"username":"Nalog3","apikey":"KLJUC3"}]
+BOT_USER=AngelDobric
+BOT_APIKEY=f9c78e399213cc93
+BOT_ACCOUNTS=
+
+# Nalozi se sada mogu dodavati/uklanjati direktno preko web panela (dugme + na "/").
+# Ostavi ovaj kod praznim samo za lokalni razvoj; na javnom serveru OBAVEZNO ga postavi,
+# inače svako ko zna URL može da doda/ukloni naloge.
+ADMIN_TOKEN=
+
+# Gde se čuva baza (nalozi, podešavanja) i login keš. Ostavi prazno za lokalni
+# rad (čuva se pored koda). Na Render-u, DA BI NALOZI PREŽIVELI DEPLOY:
+#   1. Render dashboard -> servis -> "Disks" -> dodaj disk (npr. 1GB)
+#   2. Postavi mount path diska, npr. /var/data, i upiši isto ovde:
+DATA_DIR=
+
+# Da li se baza/keš brišu pri svakom paljenju servisa. Podrazumevano "true"
+# (čist start - sprečava DUP grešku od "trulih" commit-ovanih fajlova).
+# POSTAVI NA "false" TEK POSLE prvog čistog pokretanja SA zakačenim diskom
+# (DATA_DIR gore) - inače nalozi dodati kroz panel neće preživeti deploy.
+WIPE_ON_BOOT=true
+
+# Main configuration
+BOT_CHAT=radioprokuplje
+CHAT_LANGUAGE=all
+
+# Users with special permissions (možeš ostaviti kako jeste ili isprazniti)
+BOT_OWNERS=[42,281199,91667566]
+
+# Disabled powers (može ostati ovako)
+DISABLED_POWERS=[29]
+
+# Websocket (ne diraj ovo)
+WEBSOCKET_URL=wss://bots.xat.com/v2
+WEBSOCKET_ORIGIN=https://xat.com
+
+# OpenAI api key (nije potreban, može ostati prazno)
+OPENAI_KEY=""
